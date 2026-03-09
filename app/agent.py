@@ -125,12 +125,14 @@ class WorkoutAgent:
         contents = _build_contents(history or [], message)
         system_prompt = _load_system_prompt()
 
+        google_search_tool = types.Tool(google_search=types.GoogleSearch())
+
         response = await self._genai_client.aio.models.generate_content(
             model=MODEL,
             contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                tools=[self._mcp_session],
+                tools=[self._mcp_session, google_search_tool],
                 temperature=0.7,
             ),
         )

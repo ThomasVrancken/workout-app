@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and fill in your values.
+#   cp terraform.tfvars.example terraform.tfvars
+
+project_id   = "my-gcp-project-id"
+region       = "europe-west1"
+hevy_api_key = "your-hevy-api-key"
+app_secret   = "pick-a-passphrase"
+gemini_model = "gemini-3-flash"

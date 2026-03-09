@@ -4,3 +4,10 @@ __pycache__/
 .env
 .cursor/mcp.json
 uv.lock
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform.lock.hcl
+infra/terraform.tfvars
