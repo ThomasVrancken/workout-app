@@ -50,11 +50,11 @@ async def health():
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
     try:
-        response = await agent.chat(req.message, req.history)
-        return {"response": response}
+        result = await agent.chat(req.message, req.history)
+        return {"response": result["text"], "tool_calls": result["tool_calls"]}
     except Exception:
         logger.exception("Error in chat")
         return JSONResponse(
             status_code=500,
-            content={"response": "Something went wrong. Please try again."},
+            content={"response": "Something went wrong. Please try again.", "tool_calls": []},
         )

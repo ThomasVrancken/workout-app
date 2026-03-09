@@ -5,146 +5,763 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#070b14">
 <title>Workout Agent</title>
 <link rel="manifest" href="/static/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f172a;--surface:#1e293b;--surface2:#334155;
-  --text:#f1f5f9;--text-muted:#94a3b8;
-  --accent:#6366f1;--accent-hover:#818cf8;
-  --user-bg:#6366f1;--bot-bg:#1e293b;
-  --radius:16px;--font:'Inter',system-ui,sans-serif;
-}
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text)}
-body{display:flex;flex-direction:column;overflow:hidden}
 
-/* Header */
-.header{
-  padding:16px 20px;text-align:center;
-  background:var(--surface);border-bottom:1px solid var(--surface2);
-  flex-shrink:0;
+:root {
+  --bg: #070b14;
+  --bg-subtle: #0d1220;
+  --surface: #111827;
+  --surface-hover: #1a2332;
+  --border: #1f2937;
+  --border-light: #2a3548;
+  --text: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --accent: #818cf8;
+  --accent-bright: #a5b4fc;
+  --accent-dim: #6366f1;
+  --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(139,92,246,.10) 100%);
+  --user-gradient: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,.5);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
-.header h1{font-size:18px;font-weight:600;letter-spacing:-0.02em}
 
-/* Chat area */
-.chat{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:12px}
-.chat::-webkit-scrollbar{width:4px}
-.chat::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:4px}
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
 
-.msg{max-width:85%;padding:12px 16px;border-radius:var(--radius);line-height:1.5;font-size:15px;word-wrap:break-word}
-.msg.user{align-self:flex-end;background:var(--user-bg);border-bottom-right-radius:4px}
-.msg.bot{align-self:flex-start;background:var(--bot-bg);border-bottom-left-radius:4px;border:1px solid var(--surface2)}
-.msg.bot p{margin-bottom:8px}.msg.bot p:last-child{margin-bottom:0}
-.msg.bot code{background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:13px}
-.msg.bot pre{background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0}
-.msg.bot pre code{background:none;padding:0}
-.msg.bot ul,.msg.bot ol{padding-left:20px;margin-bottom:8px}
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-/* Typing indicator */
-.typing{display:none;align-self:flex-start;padding:12px 20px;background:var(--bot-bg);border:1px solid var(--surface2);border-radius:var(--radius);border-bottom-left-radius:4px}
-.typing.visible{display:flex;gap:4px;align-items:center}
-.typing span{width:8px;height:8px;background:var(--text-muted);border-radius:50%;animation:bounce .6s infinite alternate}
-.typing span:nth-child(2){animation-delay:.2s}
-.typing span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{to{opacity:.3;transform:translateY(-4px)}}
+/* ── Header ─────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(17, 24, 39, .80);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 10;
+}
 
-/* Input bar */
-.input-bar{
-  display:flex;gap:8px;padding:12px;
-  background:var(--surface);border-top:1px solid var(--surface2);
-  flex-shrink:0;
+.header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(99, 102, 241, .3);
 }
-.input-bar textarea{
-  flex:1;resize:none;border:none;outline:none;
-  background:var(--bg);color:var(--text);
-  padding:12px 16px;border-radius:24px;
-  font-family:var(--font);font-size:15px;
-  max-height:120px;line-height:1.4;
-}
-.input-bar textarea::placeholder{color:var(--text-muted)}
-.input-bar button{
-  width:44px;height:44px;border:none;border-radius:50%;
-  background:var(--accent);color:#fff;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .15s;flex-shrink:0;
-}
-.input-bar button:hover{background:var(--accent-hover)}
-.input-bar button:disabled{opacity:.4;cursor:not-allowed}
-.input-bar button svg{width:20px;height:20px}
 
-/* Auth overlay */
-.auth-overlay{
-  position:fixed;inset:0;background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  z-index:100;
+.header-logo svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
 }
-.auth-overlay.hidden{display:none}
-.auth-box{
-  text-align:center;padding:32px;max-width:320px;width:100%;
-}
-.auth-box h2{margin-bottom:8px;font-size:22px;font-weight:600}
-.auth-box p{color:var(--text-muted);margin-bottom:24px;font-size:14px}
-.auth-box input{
-  width:100%;padding:14px 16px;border:1px solid var(--surface2);
-  background:var(--surface);color:var(--text);border-radius:12px;
-  font-size:16px;font-family:var(--font);margin-bottom:16px;outline:none;
-}
-.auth-box input:focus{border-color:var(--accent)}
-.auth-box .auth-btn{
-  width:100%;padding:14px;border:none;border-radius:12px;
-  background:var(--accent);color:#fff;font-size:16px;font-weight:500;
-  cursor:pointer;font-family:var(--font);
-}
-.auth-box .auth-btn:hover{background:var(--accent-hover)}
-.auth-error{color:#ef4444;font-size:13px;margin-top:8px;display:none}
 
-/* Empty state */
-.empty-state{
-  flex:1;display:flex;align-items:center;justify-content:center;
-  color:var(--text-muted);font-size:15px;text-align:center;padding:40px;
-}
-.empty-state.hidden{display:none}
+.header-text { flex: 1; }
 
-/* Safe area for notched phones */
-@supports(padding-bottom: env(safe-area-inset-bottom)){
-  .input-bar{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+.header-text h1 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.header-text p {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.header-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, .5);
+  flex-shrink: 0;
+}
+
+/* ── Chat area ──────────────────────────────────────── */
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scroll-behavior: smooth;
+}
+
+.chat::-webkit-scrollbar { width: 5px; }
+.chat::-webkit-scrollbar-track { background: transparent; }
+.chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.chat::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+/* ── Messages ───────────────────────────────────────── */
+.msg-row {
+  display: flex;
+  gap: 10px;
+  max-width: 88%;
+  animation: msgIn .3s ease-out;
+}
+
+.msg-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.msg-row.bot {
+  align-self: flex-start;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.msg-row.bot .msg-avatar {
+  background: var(--gradient-subtle);
+  border: 1px solid rgba(99,102,241,.2);
+}
+
+.msg-row.bot .msg-avatar svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+
+.msg-row.user .msg-avatar {
+  display: none;
+}
+
+.msg-bubble {
+  padding: 12px 16px;
+  line-height: 1.55;
+  font-size: 14.5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.msg-row.user .msg-bubble {
+  background: var(--user-gradient);
+  color: #fff;
+  border-radius: var(--radius) var(--radius) 6px var(--radius);
+  box-shadow: 0 2px 12px rgba(99, 102, 241, .25);
+}
+
+.msg-row.bot .msg-bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) var(--radius) 6px;
+}
+
+/* Bot message markdown */
+.msg-row.bot .msg-bubble p { margin-bottom: 8px; }
+.msg-row.bot .msg-bubble p:last-child { margin-bottom: 0; }
+.msg-row.bot .msg-bubble strong { color: var(--accent-bright); font-weight: 600; }
+.msg-row.bot .msg-bubble code {
+  background: rgba(99, 102, 241, .1);
+  border: 1px solid rgba(99, 102, 241, .15);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+}
+.msg-row.bot .msg-bubble pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-xs);
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.msg-row.bot .msg-bubble pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+.msg-row.bot .msg-bubble ul,
+.msg-row.bot .msg-bubble ol {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+.msg-row.bot .msg-bubble li { margin-bottom: 4px; }
+.msg-row.bot .msg-bubble a {
+  color: var(--accent-bright);
+  text-decoration: underline;
+  text-decoration-color: rgba(165, 180, 252, .3);
+  text-underline-offset: 2px;
+}
+.msg-row.bot .msg-bubble a:hover { text-decoration-color: var(--accent-bright); }
+.msg-row.bot .msg-bubble h1,
+.msg-row.bot .msg-bubble h2,
+.msg-row.bot .msg-bubble h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 12px 0 6px 0;
+  color: var(--text);
+}
+.msg-row.bot .msg-bubble h1:first-child,
+.msg-row.bot .msg-bubble h2:first-child,
+.msg-row.bot .msg-bubble h3:first-child {
+  margin-top: 0;
+}
+.msg-row.bot .msg-bubble table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.msg-row.bot .msg-bubble th,
+.msg-row.bot .msg-bubble td {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.msg-row.bot .msg-bubble th {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--accent-bright);
+}
+
+/* ── Tool calls accordion ───────────────────────────── */
+.tool-calls {
+  margin-top: 8px;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.tool-calls-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+}
+
+.tool-calls-toggle:hover {
+  color: var(--text-secondary);
+  background: rgba(255,255,255,.03);
+}
+
+.tool-calls-toggle .tc-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.tool-calls-toggle .tc-label { flex: 1; text-align: left; }
+
+.tool-calls-toggle .tc-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+
+.tool-calls.open .tool-calls-toggle .tc-chevron {
+  transform: rotate(180deg);
+}
+
+.tool-calls-details {
+  display: none;
+  border-top: 1px solid var(--border);
+}
+
+.tool-calls.open .tool-calls-details {
+  display: block;
+}
+
+.tc-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tc-item:last-child { border-bottom: none; }
+
+.tc-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(99, 102, 241, .12);
+  border: 1px solid rgba(99, 102, 241, .2);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--accent-bright);
+  margin-bottom: 8px;
+}
+
+.tc-section { margin-bottom: 6px; }
+.tc-section:last-child { margin-bottom: 0; }
+
+.tc-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.tc-section-data {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ── Typing indicator ───────────────────────────────── */
+.typing-row {
+  display: none;
+  align-self: flex-start;
+  gap: 10px;
+  animation: msgIn .3s ease-out;
+}
+
+.typing-row.visible { display: flex; }
+
+.typing-row .msg-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--gradient-subtle);
+  border: 1px solid rgba(99,102,241,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.typing-row .msg-avatar svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+
+.typing-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) var(--radius) 6px;
+}
+
+.typing-dots span {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: typingPulse 1.4s ease-in-out infinite;
+  opacity: .4;
+}
+.typing-dots span:nth-child(2) { animation-delay: .2s; }
+.typing-dots span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes typingPulse {
+  0%, 100% { opacity: .4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ── Empty state ────────────────────────────────────── */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.empty-state.hidden { display: none; }
+
+.empty-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 40px rgba(99, 102, 241, .25), 0 0 80px rgba(139, 92, 246, .1);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+.empty-logo svg {
+  width: 36px;
+  height: 36px;
+  color: #fff;
+}
+
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(99, 102, 241, .25), 0 0 80px rgba(139, 92, 246, .1); }
+  50% { box-shadow: 0 0 50px rgba(99, 102, 241, .35), 0 0 100px rgba(139, 92, 246, .15); }
+}
+
+.empty-state h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.suggestion-chip {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.suggestion-chip:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent-dim);
+  color: var(--accent-bright);
+}
+
+/* ── Input bar ──────────────────────────────────────── */
+.input-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(17, 24, 39, .80);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 4px 4px 4px 18px;
+  transition: border-color .2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+}
+
+.input-wrapper textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  padding: 8px 0;
+  font-family: var(--font);
+  font-size: 14.5px;
+  max-height: 120px;
+  line-height: 1.4;
+}
+
+.input-wrapper textarea::placeholder { color: var(--text-muted); }
+
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .15s, transform .15s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover { opacity: .9; transform: scale(1.05); }
+.send-btn:active { transform: scale(.95); }
+.send-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+.send-btn svg { width: 18px; height: 18px; }
+
+/* ── Auth overlay ───────────────────────────────────── */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.auth-overlay.hidden { display: none; }
+
+.auth-box {
+  text-align: center;
+  padding: 40px 28px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.auth-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 40px rgba(99, 102, 241, .3);
+}
+
+.auth-logo svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+}
+
+.auth-box h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.auth-box .auth-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  font-size: 14px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font);
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+
+.auth-box input:focus {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--gradient);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: opacity .15s;
+}
+
+.auth-btn:hover { opacity: .9; }
+
+.auth-error {
+  color: #f87171;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ── Utilities ──────────────────────────────────────── */
+@supports(padding-bottom: env(safe-area-inset-bottom)) {
+  .input-bar { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
 }
 </style>
 </head>
 <body>
 
-<!-- Auth screen -->
+<!-- ── SVG defs (hidden) ─────────────────────────────── -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.4 14.4 9.6 9.6"/>
+    <path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767-1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l1.767 1.767a2 2 0 1 1 2.829 2.829z"/>
+    <path d="m21.5 21.5-1.4-1.4"/>
+    <path d="M3.9 3.9 2.5 2.5"/>
+    <path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/>
+  </symbol>
+  <symbol id="icon-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 8V4H8"/>
+    <rect width="16" height="12" x="4" y="8" rx="2"/>
+    <path d="M2 14h2"/>
+    <path d="M20 14h2"/>
+    <path d="M15 13v2"/>
+    <path d="M9 13v2"/>
+  </symbol>
+  <symbol id="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/>
+    <path d="m21.854 2.147-10.94 10.939"/>
+  </symbol>
+  <symbol id="icon-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/>
+    <path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/>
+    <path d="m2.3 2.3 7.286 7.286"/>
+    <circle cx="11" cy="11" r="2"/>
+  </symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m6 9 6 6 6-6"/>
+  </symbol>
+</svg>
+
+<!-- ── Auth screen ───────────────────────────────────── -->
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-box">
+    <div class="auth-logo">
+      <svg><use href="#icon-dumbbell"/></svg>
+    </div>
     <h2>Workout Agent</h2>
-    <p>Enter your passphrase to continue</p>
+    <p class="auth-subtitle">Your AI-powered workout coach. Enter your passphrase to get started.</p>
     <input type="password" id="authInput" placeholder="Passphrase" autocomplete="off">
     <button class="auth-btn" id="authBtn">Continue</button>
     <div class="auth-error" id="authError">Invalid passphrase. Try again.</div>
   </div>
 </div>
 
-<!-- Main chat UI -->
-<div class="header"><h1>Workout Agent</h1></div>
+<!-- ── Header ────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-logo">
+    <svg><use href="#icon-dumbbell"/></svg>
+  </div>
+  <div class="header-text">
+    <h1>Workout Agent</h1>
+    <p>AI Workout Coach</p>
+  </div>
+  <div class="header-status" title="Online"></div>
+</div>
 
+<!-- ── Chat ───────────────────────────────────────────── -->
 <div class="chat" id="chat">
   <div class="empty-state" id="emptyState">
-    Ask me anything about your workouts, routines, or training.
+    <div class="empty-logo">
+      <svg><use href="#icon-dumbbell"/></svg>
+    </div>
+    <h2>Your AI Workout Coach</h2>
+    <p>Ask me about your workouts, track progress, analyse trends, or create new routines.</p>
+    <div class="suggestions" id="suggestions">
+      <button class="suggestion-chip" data-msg="Show my last workout">Last workout</button>
+      <button class="suggestion-chip" data-msg="Analyse my training progress over the last month">Monthly progress</button>
+      <button class="suggestion-chip" data-msg="Show my workout routines">My routines</button>
+    </div>
   </div>
 </div>
 
-<div class="typing" id="typing"><span></span><span></span><span></span></div>
+<!-- ── Typing indicator ──────────────────────────────── -->
+<div class="typing-row" id="typing">
+  <div class="msg-avatar">
+    <svg><use href="#icon-bot"/></svg>
+  </div>
+  <div class="typing-dots"><span></span><span></span><span></span></div>
+</div>
 
+<!-- ── Input bar ─────────────────────────────────────── -->
 <div class="input-bar">
-  <textarea id="input" rows="1" placeholder="Ask about your workouts…" enterkeyhint="send"></textarea>
-  <button id="sendBtn" aria-label="Send">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-  </button>
+  <div class="input-wrapper">
+    <textarea id="input" rows="1" placeholder="Ask about your workouts…" enterkeyhint="send"></textarea>
+    <button class="send-btn" id="sendBtn" aria-label="Send">
+      <svg><use href="#icon-send"/></svg>
+    </button>
+  </div>
 </div>
 
 <script>
@@ -158,6 +775,7 @@ const authOverlay = document.getElementById('authOverlay');
 const authInput = document.getElementById('authInput');
 const authBtn = document.getElementById('authBtn');
 const authError = document.getElementById('authError');
+const suggestions = document.getElementById('suggestions');
 
 let token = localStorage.getItem(TOKEN_KEY) || '';
 let history = [];
@@ -165,7 +783,7 @@ let sending = false;
 
 marked.setOptions({ breaks: true, gfm: true });
 
-// Auth
+/* ── Auth ──────────────────────────────────────── */
 if (token) authOverlay.classList.add('hidden');
 
 authBtn.addEventListener('click', tryAuth);
@@ -194,13 +812,22 @@ async function tryAuth() {
   }
 }
 
-// Auto-resize textarea
+/* ── Suggestion chips ─────────────────────────── */
+suggestions.addEventListener('click', e => {
+  const chip = e.target.closest('.suggestion-chip');
+  if (!chip) return;
+  input.value = chip.dataset.msg;
+  input.dispatchEvent(new Event('input'));
+  send();
+});
+
+/* ── Auto-resize textarea ─────────────────────── */
 input.addEventListener('input', () => {
   input.style.height = 'auto';
   input.style.height = Math.min(input.scrollHeight, 120) + 'px';
 });
 
-// Send
+/* ── Send message ─────────────────────────────── */
 input.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
 });
@@ -228,11 +855,12 @@ async function send() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
     });
-
     const data = await res.json();
     const reply = data.response || 'No response received.';
+    const toolCalls = data.tool_calls || [];
+
     typing.classList.remove('visible');
-    addMsg(reply, 'bot');
+    addMsg(reply, 'bot', toolCalls);
     history.push({ role: 'assistant', content: reply });
   } catch {
     typing.classList.remove('visible');
@@ -244,16 +872,72 @@ async function send() {
   input.focus();
 }
 
-function addMsg(text, role) {
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
+/* ── Render message ───────────────────────────── */
+function addMsg(text, role, toolCalls) {
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
   if (role === 'bot') {
-    div.innerHTML = marked.parse(text);
+    row.innerHTML = `
+      <div class="msg-avatar"><svg><use href="#icon-bot"/></svg></div>
+      <div>
+        <div class="msg-bubble">${marked.parse(text)}</div>
+        ${toolCalls && toolCalls.length ? buildToolCallsHTML(toolCalls) : ''}
+      </div>`;
   } else {
-    div.textContent = text;
+    row.innerHTML = `<div class="msg-bubble"></div>`;
+    row.querySelector('.msg-bubble').textContent = text;
   }
-  chat.appendChild(div);
+
+  chat.appendChild(row);
   scrollDown();
+}
+
+/* ── Tool-calls accordion ─────────────────────── */
+function buildToolCallsHTML(calls) {
+  const count = calls.length;
+  const label = count === 1 ? '1 tool used' : `${count} tools used`;
+
+  const items = calls.map(tc => {
+    const argsStr = tc.args ? JSON.stringify(tc.args, null, 2) : '{}';
+    const resultStr = tc.result != null ? JSON.stringify(tc.result, null, 2) : 'null';
+    const truncatedResult = resultStr.length > 800
+      ? resultStr.slice(0, 800) + '\n… (truncated)'
+      : resultStr;
+
+    return `
+      <div class="tc-item">
+        <div class="tc-name">${escapeHtml(tc.name)}</div>
+        <div class="tc-section">
+          <div class="tc-section-label">Arguments</div>
+          <div class="tc-section-data">${escapeHtml(argsStr)}</div>
+        </div>
+        <div class="tc-section">
+          <div class="tc-section-label">Response</div>
+          <div class="tc-section-data">${escapeHtml(truncatedResult)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="tool-calls">
+      <button class="tool-calls-toggle" onclick="toggleToolCalls(this)">
+        <svg class="tc-icon"><use href="#icon-wrench"/></svg>
+        <span class="tc-label">${label}</span>
+        <svg class="tc-chevron"><use href="#icon-chevron"/></svg>
+      </button>
+      <div class="tool-calls-details">${items}</div>
+    </div>`;
+}
+
+function toggleToolCalls(btn) {
+  btn.closest('.tool-calls').classList.toggle('open');
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
 }
 
 function scrollDown() {

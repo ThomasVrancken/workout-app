@@ -1,7 +1,9 @@
+import json
 import os
 import logging
 from pathlib import Path
 from contextlib import asynccontextmanager
+from typing import Any
 
 from mcp import StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -31,6 +33,48 @@ def _build_contents(history: list[dict], message: str) -> list[types.Content]:
         types.Content(role="user", parts=[types.Part.from_text(text=message)])
     )
     return contents
+
+
+def _safe_serialize(obj: Any) -> Any:
+    """Best-effort conversion to a JSON-serializable structure."""
+    if obj is None:
+        return None
+    if isinstance(obj, (str, int, float, bool)):
+        return obj
+    if isinstance(obj, dict):
+        return {k: _safe_serialize(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_safe_serialize(v) for v in obj]
+    try:
+        return dict(obj)
+    except (TypeError, ValueError):
+        return str(obj)
+
+
+def _extract_tool_calls(response: types.GenerateContentResponse) -> list[dict]:
+    """Pull tool-call info out of the automatic function-calling history."""
+    history = getattr(response, "automatic_function_calling_history", None)
+    if not history:
+        return []
+
+    tool_calls: list[dict] = []
+    for content in history:
+        if not content.parts:
+            continue
+        for part in content.parts:
+            if part.function_call:
+                tool_calls.append(
+                    {
+                        "name": part.function_call.name,
+                        "args": _safe_serialize(part.function_call.args),
+                    }
+                )
+            elif part.function_response:
+                for tc in reversed(tool_calls):
+                    if tc["name"] == part.function_response.name and "result" not in tc:
+                        tc["result"] = _safe_serialize(part.function_response.response)
+                        break
+    return tool_calls
 
 
 class WorkoutAgent:
@@ -73,8 +117,8 @@ class WorkoutAgent:
         self._genai_client = None
         logger.info("MCP server stopped")
 
-    async def chat(self, message: str, history: list[dict] | None = None) -> str:
-        """Send a message to the agent and return the text response."""
+    async def chat(self, message: str, history: list[dict] | None = None) -> dict:
+        """Send a message and return ``{"text": ..., "tool_calls": [...]}``."""
         if self._mcp_session is None or self._genai_client is None:
             raise RuntimeError("Agent not initialized — MCP server not running")
 
@@ -91,7 +135,7 @@ class WorkoutAgent:
             ),
         )
 
-        if response.text:
-            return response.text
+        text = response.text or "I wasn't able to generate a response. Please try again."
+        tool_calls = _extract_tool_calls(response)
 
-        return "I wasn't able to generate a response. Please try again."
+        return {"text": text, "tool_calls": tool_calls}
