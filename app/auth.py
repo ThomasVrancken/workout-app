@@ -6,7 +6,7 @@ from fastapi import Request, HTTPException
 
 APP_SECRET = os.environ.get("APP_SECRET", "")
 
-OPEN_PATHS = {"/", "/api/health", "/manifest.json"}
+OPEN_PATHS = {"/", "/api/health", "/manifest.json", "/sw.js"}
 
 
 async def verify_auth(request: Request):
