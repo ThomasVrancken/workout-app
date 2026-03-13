@@ -51,7 +51,6 @@ workout-app/
 │       └── index.html       # Chat PWA (single file: HTML + CSS + JS)
 ├── Dockerfile               # Python 3.12 + Node.js runtime
 ├── docs/
-│   ├── PROJECT.md
 │   └── PLAN.md              # This file
 ├── scripts/
 │   └── get_latest_workout.py

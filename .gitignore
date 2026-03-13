@@ -2,9 +2,11 @@
 __pycache__/
 *.pyc
 .env
-.cursor/mcp.json
 uv.lock
 fitbod_data/
+
+# Cursor (may contain API keys in mcp.json)
+.cursor/
 
 # Terraform
 infra/.terraform/
