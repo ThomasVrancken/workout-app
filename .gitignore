@@ -4,6 +4,7 @@ __pycache__/
 .env
 .cursor/mcp.json
 uv.lock
+fitbod_data/
 
 # Terraform
 infra/.terraform/
