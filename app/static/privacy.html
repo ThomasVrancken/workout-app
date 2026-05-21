@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A0A0A">
+<title>Privacy Policy — Workout Agent</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --border: #282828;
+  --border-hover: #3A3A3A;
+  --text: #E8E8E8;
+  --text-2: #CCCCCC;
+  --text-3: #888888;
+  --text-muted: #555555;
+  --accent: #E8590C;
+  --accent-text: #F07020;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+::selection { background: rgba(232,89,12,.25); color: var(--text); }
+
+.container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+.topbar {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-mark svg { width: 12px; height: 12px; color: #fff; }
+
+.topbar a.back {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-3);
+  text-decoration: none;
+  font-weight: 400;
+  transition: color .12s;
+}
+.topbar a.back:hover { color: var(--text); }
+
+main { padding: 56px 0 80px; }
+
+.page-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-bottom: 40px;
+  font-family: var(--mono);
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 40px 0 12px;
+  color: var(--text);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+p, li {
+  color: var(--text-2);
+  font-size: 15px;
+  margin-bottom: 12px;
+  line-height: 1.65;
+}
+
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 6px; }
+
+strong { color: var(--text); font-weight: 500; }
+em { color: var(--text-3); font-style: italic; }
+
+code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--accent-text);
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(240,112,32,.3);
+  text-underline-offset: 2px;
+  transition: text-decoration-color .12s;
+}
+
+a:hover { text-decoration-color: var(--accent-text); }
+
+/* Callout — left border rule, no rounded card */
+.callout {
+  border-left: 2px solid var(--accent);
+  padding: 14px 18px;
+  margin: 28px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  background: var(--surface);
+}
+
+.callout strong { color: var(--accent-text); font-weight: 500; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+footer a {
+  color: var(--text-3);
+  text-decoration: none;
+  padding: 4px 6px;
+}
+
+footer a:hover { color: var(--text); }
+
+@media (max-width: 640px) {
+  .container, .topbar-inner { padding: 0 16px; }
+  main { padding: 40px 0 56px; }
+  h2 { font-size: 16px; }
+  p, li { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 8v8M18 8v8M3 10v4M21 10v4M9 12h6"/>
+  </symbol>
+</svg>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="brand">
+      <div class="brand-mark"><svg><use href="#i-mark"/></svg></div>
+      <span>workout-agent</span>
+    </a>
+    <a class="back" href="/">&larr; back</a>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="page-tag">legal/privacy</div>
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">last_updated: 2026-05-18T00:00:00Z</p>
+
+    <p>
+      Workout Agent is an open-source AI strength coach that connects to your
+      <a href="https://www.hevyapp.com/" target="_blank" rel="noopener">Hevy</a> account.
+      We take your privacy seriously and only collect what is strictly necessary
+      to make the service work.
+    </p>
+
+    <div class="callout">
+      <strong>TL;DR:</strong> We store your Google account email (for sign-in) and your Hevy API key
+      (encrypted, so we can fetch your workout data on your behalf). We never sell or share your data,
+      and we never use it to train AI models. You can delete everything at any time from your account
+      settings.
+    </div>
+
+    <h2>Who we are</h2>
+    <p>
+      Workout Agent is an open-source project maintained at
+      <a href="https://github.com/ThomasVrancken/workout-app" target="_blank" rel="noopener">github.com/ThomasVrancken/workout-app</a>.
+      For any privacy-related questions, contact us through a GitHub issue or
+      via the email address listed on the maintainer's GitHub profile.
+    </p>
+
+    <h2>What data we collect</h2>
+    <p>When you sign up and use Workout Agent, we collect and store:</p>
+    <ul>
+      <li><strong>Your email address and display name</strong> &mdash; provided by Google when you sign in (via Firebase Authentication).</li>
+      <li><strong>Your Hevy API key</strong> &mdash; provided by you, encrypted at rest using AES-128 (Fernet) before being stored.</li>
+      <li><strong>Account metadata</strong> &mdash; account creation date, last active date, and the date and version of the Terms you consented to.</li>
+    </ul>
+    <p>
+      We do <strong>not</strong> store your chat messages or any of your workout data on our servers.
+      Workout data is fetched live from Hevy on each request and held only in memory for the duration
+      of the request.
+    </p>
+
+    <h2>How we use your data</h2>
+    <ul>
+      <li>To authenticate you via Firebase Authentication.</li>
+      <li>To call the Hevy API on your behalf using your API key &mdash; reading or modifying your workout data when you ask the AI to.</li>
+      <li>To send your messages to Google's Gemini API (via Vertex AI) so the AI can generate a reply. We do not include personally identifying information beyond what is needed to answer your question.</li>
+    </ul>
+    <p>
+      We do <strong>not</strong> use your data for advertising, profiling, or to train any AI model.
+      We do <strong>not</strong> sell or rent your data to third parties.
+    </p>
+
+    <h2>Third-party services</h2>
+    <p>Workout Agent uses the following sub-processors:</p>
+    <ul>
+      <li><strong>Google Cloud Platform</strong> &mdash; hosts the application (Cloud Run), stores account data (Firestore), handles authentication (Firebase Auth), and runs the AI model (Vertex AI / Gemini). See Google's <a href="https://cloud.google.com/terms/data-processing-addendum" target="_blank" rel="noopener">Data Processing Addendum</a>.</li>
+      <li><strong>Hevy</strong> &mdash; your workout data lives in Hevy. We use the public Hevy API with your own API key. See <a href="https://www.hevyapp.com/privacy-policy" target="_blank" rel="noopener">Hevy's privacy policy</a>.</li>
+    </ul>
+
+    <h2>Where your data is stored</h2>
+    <p>
+      All data is stored in Google Cloud, encrypted at rest, in the region configured for the deployment
+      (by default, an EU region). Your Hevy API key is additionally encrypted at the application level
+      with a separate key that is not stored in the database.
+    </p>
+
+    <h2>How long we keep your data</h2>
+    <p>
+      We keep your data for as long as your account exists. If you delete your account, all your data
+      (email, encrypted API key, metadata) is permanently deleted within 30 days. Backups are rotated
+      out within the same period.
+    </p>
+
+    <h2>Your rights (GDPR)</h2>
+    <p>If you are in the European Economic Area, you have the following rights:</p>
+    <ul>
+      <li><strong>Right of access and portability</strong> &mdash; export all your data via the <code>Export my data</code> button in account settings (or call <code>GET /api/me/export</code>).</li>
+      <li><strong>Right to rectification</strong> &mdash; update your Hevy API key at any time in settings.</li>
+      <li><strong>Right to erasure</strong> &mdash; delete your account at any time via the <code>Delete my account</code> button in settings. This is permanent and immediate.</li>
+      <li><strong>Right to withdraw consent</strong> &mdash; sign out and delete your account at any time.</li>
+      <li><strong>Right to lodge a complaint</strong> &mdash; with your local data protection authority.</li>
+    </ul>
+
+    <h2>Cookies and tracking</h2>
+    <p>
+      We do not use tracking cookies or any analytics services. The app uses browser local storage
+      only to keep you signed in between sessions (a standard Firebase Auth requirement).
+    </p>
+
+    <h2>Age restriction</h2>
+    <p>Workout Agent is not intended for users under 16 years old.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      If we update this policy in a meaningful way, you will be asked to re-consent the next time you
+      sign in. The last-updated date at the top of this page always reflects the current version.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <a href="/">home</a>
+  &middot;
+  <a href="/terms">terms</a>
+  &middot;
+  <a href="https://github.com/ThomasVrancken/workout-app" target="_blank" rel="noopener">github</a>
+</footer>
+
+</body>
+</html>

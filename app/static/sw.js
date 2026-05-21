@@ -1,5 +1,5 @@
-const CACHE = "workout-v1";
-const PRECACHE = ["/", "/static/manifest.json"];
+const CACHE = "workout-v2";
+const PRECACHE = ["/app", "/static/manifest.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
@@ -17,6 +17,9 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  const url = new URL(e.request.url);
+  if (url.pathname.startsWith("/api/")) return;
+
   e.respondWith(
     fetch(e.request)
       .then((res) => {

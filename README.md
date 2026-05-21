@@ -1,39 +1,71 @@
 # Workout Agent
 
-An AI-powered workout coach that connects to your [Hevy](https://www.hevyapp.com/) workout data. Chat with an agent that can look up your workout history, analyse trends, and create or modify routines on your behalf.
+An AI workout coach that already knows your training history.
 
-> **Requires a [Hevy](https://www.hevyapp.com/) account with a PRO subscription** (needed for API access).
+Your workout app tracks reps. But fitness is messy — you tweak a shoulder, you play other sports, your goals shift. Workout Agent reads your [Hevy](https://www.hevyapp.com/) data and chats with you about it. Ask anything, adjust your routine on the fly, and skip the part where you re-explain your training background to a generic AI every time.
 
-## Two Ways to Use This
-
-### Option A: MCP Server Only (Quickest)
-
-Use the [`hevy-mcp`](https://www.npmjs.com/package/hevy-mcp) server directly with any MCP-compatible AI tool — no deployment needed. Your AI assistant gets full access to your Hevy workout data through the Model Context Protocol.
-
-Works with tools like **Cursor**, **Claude Code**, **Claude Desktop**, **Windsurf**, and any other MCP client.
-
-**[Jump to MCP setup instructions](#option-a-mcp-server-setup)**
-
-### Option B: Deploy the Full Application
-
-Deploy a self-hosted workout chat agent as a web app (PWA). This gives you a dedicated mobile-friendly chat UI powered by Gemini, hosted on Google Cloud Run.
-
-**[Jump to deployment instructions](#option-b-full-application-deployment)**
+> **Live app:** [`https://workout-agent.app`](https://workout-agent.app) *(replace with your deployment URL)*
+>
+> **Demo:** *(2-minute Loom video — add link once recorded)*
 
 ---
 
-## Option A: MCP Server Setup
+# For users
 
-The [`hevy-mcp`](https://www.npmjs.com/package/hevy-mcp) npm package is a ready-made MCP server that gives any AI assistant access to your Hevy data — workouts, routines, exercises, and more.
+## What it does
 
-### Prerequisites
+- Reads your Hevy workouts and routines.
+- Modifies your routines for you when you ask (e.g. "swap dumbbell press for incline barbell on push day").
+- Knows exercise science, sports physiology, and which muscle groups your other activities use.
+- Lives as a **PWA** — works in the browser and installs to your phone's home screen like a native app.
 
-- **Node.js** >= 20 installed
-- A **Hevy API key** — get one at [hevy.com/settings?developer](https://hevy.com/settings?developer)
+## Getting started (2 minutes)
 
-### Cursor
+1. **Open the app** and sign in with your Google account (or create an email/password account).
+2. **Accept the Privacy Policy and Terms**.
+3. **Connect your Hevy account.** Open [hevy.com/settings?developer](https://hevy.com/settings?developer), generate an API key, and paste it into the onboarding screen. The key is encrypted before being stored — only the server, never the browser, can decrypt it to call Hevy on your behalf.
+4. **Ask anything.** Some examples to try first:
+   - "Show me my last workout."
+   - "Why has my bench press stalled the last 3 weeks?"
+   - "I tweaked my shoulder — adjust my push day."
+   - "I'm playing squash twice this week. Reduce my leg volume accordingly."
+   - "Build me a new push/pull/legs routine focused on hypertrophy."
 
-Add the following to your MCP config file (`.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally):
+## Install it on your phone
+
+On iPhone (Safari) or Android (Chrome), open the app and choose **Add to Home Screen** in the share menu. It opens full-screen, no browser chrome.
+
+## FAQ
+
+**Do I need a Hevy account?**
+Yes. Hevy is where your workout data lives. The app reads from your Hevy account through their official API.
+
+**Do I need a Hevy PRO subscription?**
+Yes. Hevy's API access requires the PRO plan. There's no way around this — it's a Hevy policy, not ours.
+
+**Is my data safe?**
+Your Hevy API key is encrypted at rest with a server-side key (Fernet / AES-128). Your chat messages are **not** stored on the server. You can export everything we have on you or delete your account at any time from settings. See the [Privacy Policy](app/static/privacy.html).
+
+**Is it free?**
+Yes. It's an open-source pet project. Cloud Run costs are negligible.
+
+**How do I delete my account?**
+Open the app → settings (gear icon) → "Delete my account". Everything is removed immediately and permanently.
+
+**Can the AI mess up my routines in Hevy?**
+The AI can modify your routines via the Hevy API. If you don't like a change, you can revert it inside the Hevy app, or revoke the API key in Hevy settings at any time.
+
+---
+
+# For developers
+
+## Two ways to run this code
+
+### A. Use the MCP server only (no deployment)
+
+The [`hevy-mcp`](https://www.npmjs.com/package/hevy-mcp) npm package is the open-source MCP server that powers the Hevy integration. You can wire it up directly to any MCP client (Cursor, Claude Desktop, Claude Code, Windsurf, etc.) without running this repo at all.
+
+#### Cursor / Claude Desktop config
 
 ```json
 {
@@ -41,192 +73,145 @@ Add the following to your MCP config file (`.cursor/mcp.json` in your project, o
     "hevy-mcp": {
       "command": "npx",
       "args": ["-y", "hevy-mcp"],
-      "env": {
-        "HEVY_API_KEY": "<your-hevy-api-key>"
-      }
+      "env": { "HEVY_API_KEY": "<your-hevy-api-key>" }
     }
   }
 }
 ```
 
-### Claude Desktop
+For Claude Desktop, the config file is at `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS.
 
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
-
-```json
-{
-  "mcpServers": {
-    "hevy-mcp": {
-      "command": "npx",
-      "args": ["-y", "hevy-mcp"],
-      "env": {
-        "HEVY_API_KEY": "<your-hevy-api-key>"
-      }
-    }
-  }
-}
-```
-
-### Claude Code
+#### Claude Code
 
 ```bash
 claude mcp add hevy-mcp -- npx -y hevy-mcp --hevy-api-key=<your-hevy-api-key>
 ```
 
-### Other MCP Clients
+#### Other MCP clients
 
-The server runs over **stdio** transport. Launch it with:
+Runs over stdio. Launch with `HEVY_API_KEY=… npx -y hevy-mcp` and point your MCP client at it.
 
-```bash
-HEVY_API_KEY=<your-hevy-api-key> npx -y hevy-mcp
-```
+### B. Fork and host your own instance
 
-Point your MCP client's stdio configuration at this command.
+Deploy your own multi-user PWA on Google Cloud Run with Firebase Auth and Firestore.
 
-### What You Can Do
-
-Once connected, your AI assistant can use these tools:
-
-| Category | Tools |
-|----------|-------|
-| **Workouts** | Fetch workout history, get a specific workout, create/update workouts, get workout count |
-| **Routines** | List routines, get/create/update routines |
-| **Exercises** | Browse exercise templates, get exercise history |
-| **Folders** | Manage routine folders |
-
-Example prompts:
-- *"Show me my last 5 workouts"*
-- *"What's my bench press progression over the last month?"*
-- *"Update my Full Body routine to add Romanian deadlifts"*
-- *"Create a new push/pull/legs routine for me"*
-
----
-
-## Option B: Full Application Deployment
-
-Deploy a standalone workout chat agent as a PWA (Progressive Web App) on Google Cloud Run. This gives you a mobile-friendly chat interface you can add to your home screen.
-
-### Architecture
-
-```
-┌──────────────┐       HTTPS        ┌─────────────────────────────────┐
-│   Phone /    │  ◄──────────────►  │   Google Cloud Run              │
-│   Browser    │                    │                                 │
-│              │                    │  ┌───────────┐   ┌───────────┐  │
-│  Chat UI     │                    │  │  FastAPI   │   │ hevy-mcp  │  │
-│  (PWA)       │                    │  │  backend   ├──►│(subprocess│  │
-│              │                    │  │            │   │ via stdio)│  │
-│              │                    │  └─────┬──────┘   └───────────┘  │
-└──────────────┘                    │        │                        │
-                                    │        │ Gemini API             │
-                                    │        ▼ (Vertex AI)            │
-                                    │  ┌───────────┐                  │
-                                    │  │  Gemini 3  │                  │
-                                    │  │   Flash    │                  │
-                                    │  └───────────┘                  │
-                                    └─────────────────────────────────┘
-```
-
-A single Cloud Run service serves both the static chat UI and the API backend. The agent uses the `hevy-mcp` server (spawned as a subprocess) and Gemini for tool-calling and conversation.
-
-### Tech Stack
-
-| Component | Choice |
-|-----------|--------|
-| Backend | Python 3.12 + FastAPI |
-| LLM | Gemini 3 Flash (via Vertex AI) |
-| MCP server | [hevy-mcp](https://www.npmjs.com/package/hevy-mcp) (Node.js, spawned as subprocess) |
-| Frontend | Single HTML file (vanilla JS, no build step) |
-| Hosting | Google Cloud Run (serverless, scales to zero) |
-| Infrastructure | Terraform |
-
-### Prerequisites
-
-- A [Google Cloud](https://cloud.google.com/) account with billing enabled
-- [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated
-- [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.5
-- A [Hevy](https://www.hevyapp.com/) account and API key
-
-### Quick Start
+See [`docs/DEPLOY.md`](docs/DEPLOY.md) for the full step-by-step guide. Short version:
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/ThomasVrancken/workout-app.git
 cd workout-app
 
-# 2. Authenticate with GCP
+# 1. Authenticate with GCP
 gcloud auth login
 gcloud auth application-default login
 
-# 3. Configure your deployment
+# 2. Set up Firebase Auth (Google + email/password) in the Firebase Console
+# 3. Generate an encryption key:
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+
+# 4. Configure Terraform
 cd infra
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your project ID, API keys, and passphrase
+# Edit with your project_id, Firebase config, encryption key
 
-# 4. Provision infrastructure
+# 5. Provision infrastructure
 terraform init
 terraform apply
 
-# 5. Build and deploy the app
+# 6. Build and deploy
 cd ..
 ./deploy.sh
 ```
 
-Step 4 creates the GCP infrastructure (APIs, service account, Artifact Registry, Cloud Run service). Step 5 builds the Docker image and deploys it. After code changes, only step 5 needs to be re-run.
+## Architecture
 
-For detailed instructions (GCP project setup, getting a Hevy API key, troubleshooting), see [docs/DEPLOY.md](docs/DEPLOY.md).
-
-### Local Development
-
-```bash
-# Create a .env file from the example
-cp infra/terraform.tfvars.example .env
-# Edit .env to use KEY=VALUE format (see docs/DEPLOY.md for details)
-
-# Install dependencies (requires uv: https://docs.astral.sh/uv/)
-uv venv && source .venv/bin/activate
-uv pip install -e .
-
-# Run the server (Node.js required for the hevy-mcp subprocess)
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+```
+┌──────────────┐       HTTPS        ┌────────────────────────────────────────────┐
+│   Phone /    │  ◄──────────────►  │   Google Cloud Run (one service)           │
+│   Browser    │                    │                                            │
+│              │                    │  ┌──────────────┐    ┌────────────────┐    │
+│  Landing /   │                    │  │   FastAPI    │───►│  hevy-mcp      │    │
+│  Chat PWA    │                    │  │  (Python)    │    │  (Node sub-    │    │
+│              │                    │  │              │    │   process,     │    │
+│              │                    │  │              │    │   per request) │    │
+└──────┬───────┘                    │  └──────┬───────┘    └────────────────┘    │
+       │                            │         │                                  │
+       │ Firebase Auth (ID token)   │         ├──► Firestore (encrypted user data)
+       │                            │         ├──► Vertex AI / Gemini             │
+       │                            │         └──► Firebase Auth (verify tokens)  │
+       │                            └────────────────────────────────────────────┘
+       │
+       └──► Firebase Auth (Google Sign-In / email & password)
 ```
 
-Open http://localhost:8080 in your browser.
+### Tech stack
 
-### Cost
+| Component       | Choice                                                          |
+| --------------- | --------------------------------------------------------------- |
+| Backend         | Python 3.12 + FastAPI                                           |
+| Auth            | Firebase Auth (Google SSO + email/password)                     |
+| Database        | Firestore (Native mode)                                         |
+| Encryption      | `cryptography.fernet` (AES-128) for the per-user Hevy API key   |
+| LLM             | Gemini 3 Flash via Vertex AI                                    |
+| MCP server      | [`hevy-mcp`](https://www.npmjs.com/package/hevy-mcp) (Node.js, spawned per request) |
+| Frontend        | Vanilla HTML / CSS / JS (no build step)                         |
+| Hosting         | Google Cloud Run (scales to zero)                               |
+| Infrastructure  | Terraform                                                       |
 
-Cloud Run scales to zero and Gemini 3 Flash via Vertex AI is very cheap. Personal use costs pennies per month at most.
+### Request flow (chat)
 
----
+1. Browser sends a chat message with the user's Firebase ID token.
+2. FastAPI verifies the token, looks up the user in Firestore, decrypts their Hevy API key in memory.
+3. FastAPI spawns a short-lived `hevy-mcp` subprocess with that user's key.
+4. Gemini drives a tool-use loop against the MCP server.
+5. The subprocess exits and the request completes.
 
-## Project Structure
+Chat history is held only in the browser — it is never persisted server-side.
+
+## Project structure
 
 ```
 workout-app/
 ├── app/
-│   ├── main.py              # FastAPI app: endpoints + static serving
-│   ├── agent.py             # MCP client + Gemini tool-use loop
-│   ├── auth.py              # Shared-secret auth middleware
+│   ├── main.py              # FastAPI routes (landing, chat, /api/me, etc.)
+│   ├── agent.py             # Per-request MCP subprocess + Gemini tool loop
+│   ├── auth.py              # Firebase ID token verification
+│   ├── users.py             # Firestore user store + Fernet encryption helpers
 │   ├── system_prompt.txt    # Agent system prompt
 │   └── static/
-│       └── index.html       # Chat PWA (HTML + CSS + JS)
+│       ├── landing.html     # Public marketing landing page (/)
+│       ├── index.html       # Chat PWA (/app)
+│       ├── privacy.html     # Privacy Policy (/privacy)
+│       ├── terms.html       # Terms of Service (/terms)
+│       ├── manifest.json    # PWA manifest
+│       └── sw.js            # Service worker
 ├── infra/                   # Terraform (GCP infrastructure)
-│   ├── main.tf              # Provider + API enablements
+│   ├── main.tf              # Provider, API enablements, Firestore + rules
 │   ├── iam.tf               # Service account + IAM
 │   ├── cloud_run.tf         # Artifact Registry + Cloud Run
 │   ├── variables.tf         # Input variables
 │   ├── outputs.tf           # Outputs (URL, image path)
+│   ├── firestore.rules      # Client-side Firestore is locked down
 │   └── terraform.tfvars.example
+├── docs/
+│   ├── DEPLOY.md            # Full deployment guide
+│   └── PROMOTION.md         # Social media post templates + demo script
 ├── scripts/
-│   └── get_latest_workout.py  # CLI helper to fetch latest workout
-├── deploy.sh                # Build + deploy script
+│   └── get_latest_workout.py
+├── deploy.sh
 ├── Dockerfile
 ├── pyproject.toml
-└── docs/
-    ├── DEPLOY.md            # Detailed deployment guide
-    └── PLAN.md              # Architecture design notes
+└── README.md
 ```
+
+## Contributing
+
+This is a personal pet project, but PRs and issues are welcome.
+
+- For bugs or feature requests, open an issue.
+- For changes, please open a PR against `main`. Keep changes focused and explain the motivation in the PR description.
+- Keep the frontend dependency-free (no npm build step).
 
 ## License
 
-This project is provided as-is for personal use. The [`hevy-mcp`](https://github.com/chrisdoc/hevy-mcp) server is an MIT-licensed open source package by [Christoph Kieslich](https://github.com/chrisdoc).
+Provided as-is for personal use. The [`hevy-mcp`](https://github.com/chrisdoc/hevy-mcp) server is an MIT-licensed open-source package by [Christoph Kieslich](https://github.com/chrisdoc).

@@ -1,7 +1,7 @@
 [project]
 name = "workout-app"
-version = "0.1.0"
-description = "Connecting the Hevy workout app to custom agents for new functionalities"
+version = "0.2.0"
+description = "AI workout coach connecting users to their Hevy data via a chat agent"
 requires-python = ">=3.12"
 dependencies = [
     "requests>=2.31.0",
@@ -10,4 +10,8 @@ dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.34.0",
     "python-dotenv>=1.0.0",
+    "firebase-admin>=6.5.0",
+    "google-cloud-firestore>=2.16.0",
+    "cryptography>=42.0.0",
+    "slowapi>=0.1.9",
 ]

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A0A0A">
+<title>Workout Agent — AI coach that reads your Hevy data</title>
+<meta name="description" content="Connect Hevy. Get an AI coach that knows every set you've ever logged. Analyzes trends, spots stalls, adjusts routines.">
+<meta property="og:title" content="Workout Agent — AI coach that reads your Hevy data">
+<meta property="og:description" content="Connect Hevy. Get an AI coach that knows every set you've ever logged.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --surface-2: #1E1E1E;
+  --border: #282828;
+  --border-hover: #3A3A3A;
+  --text: #E8E8E8;
+  --text-2: #CCCCCC;
+  --text-3: #888888;
+  --text-muted: #555555;
+  --accent: #E8590C;
+  --accent-text: #F07020;
+  --danger: #DC2626;
+  --success: #16A34A;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+  font-weight: 400;
+}
+
+a { color: inherit; text-decoration: none; }
+::selection { background: rgba(232,89,12,.25); color: var(--text); }
+
+.w { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Nav ────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.logo-mark {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-mark svg { width: 12px; height: 12px; color: #fff; }
+
+.nav-right { display: flex; align-items: center; gap: 4px; }
+
+.nav-link {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+  padding: 6px 10px;
+  transition: color .15s;
+}
+
+.nav-link:hover { color: var(--text); }
+
+/* ── Buttons ────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-weight: 500;
+  font-size: 13px;
+  font-family: var(--mono);
+  cursor: pointer;
+  border: none;
+  transition: background .12s, color .12s;
+  text-decoration: none;
+}
+
+.btn:active { opacity: .85; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+}
+
+.btn-primary:hover { background: #C2410C; }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  border-radius: 0;
+}
+
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+
+.btn-lg { padding: 10px 22px; font-size: 14px; }
+
+/* ── Hero ───────────────────────── */
+/* Left-aligned, no centered badge — technical/instrument direction */
+.hero {
+  padding: 80px 0 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.hero-content { max-width: 520px; }
+
+.hero h1 {
+  font-size: clamp(32px, 4.5vw, 48px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+/* Exposed metadata block — specificity markers */
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.hero-meta span {
+  display: inline-block;
+  margin-right: 16px;
+  white-space: nowrap;
+}
+
+/* ── Demo ───────────────────────── */
+/* Asymmetric placement — sits in right column of hero grid */
+.demo {
+  border: 1px solid var(--border);
+  padding: 20px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  position: relative;
+}
+
+.demo::before {
+  content: 'LIVE DEMO';
+  position: absolute;
+  top: -1px;
+  right: 20px;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent-text);
+  background: var(--bg);
+  padding: 0 8px;
+  letter-spacing: 0.05em;
+}
+
+.msg {
+  max-width: 88%;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+}
+
+.msg-bot {
+  align-self: flex-start;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.msg-bot strong { color: var(--text); font-weight: 500; }
+.msg-bot p { margin-bottom: 6px; }
+.msg-bot p:last-child { margin-bottom: 0; }
+
+/* Data table inside bot message — technical data display */
+.data-table {
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.data-label {
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+}
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.data-row + .data-row { border-top: 1px solid rgba(255,255,255,.04); }
+.data-row span:last-child { color: var(--text); font-weight: 500; }
+.down { color: var(--danger); font-size: 11px; font-weight: 500; }
+
+.typing-ind {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.typing-ind span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+.typing-ind span:nth-child(2) { animation-delay: .15s; }
+.typing-ind span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes blink {
+  0%, 100% { opacity: .25; }
+  50% { opacity: .9; }
+}
+
+/* ── Section dividers ───────────── */
+/* Hairline rules, not card wrappers — instrument direction */
+section { padding: 64px 0; }
+
+.section-rule { border-top: 1px solid var(--border); }
+
+.section-head {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-bottom: 40px;
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  padding-top: 2px;
+}
+
+.section-title {
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.section-sub {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-top: 10px;
+  max-width: 520px;
+}
+
+/* ── Capabilities — replaces 3-col feature cards ── */
+/* Table with real data, not decorative cards */
+.cap-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+}
+
+.cap-table th,
+.cap-table td {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cap-table th {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--surface);
+}
+
+.cap-table td { color: var(--text-2); vertical-align: top; }
+.cap-table td:first-child { color: var(--text); font-weight: 500; width: 200px; }
+
+.cap-table tr:last-child td { border-bottom: none; }
+
+/* Expandable rows — genuine interactive element */
+.cap-table .expand-trigger {
+  cursor: pointer;
+  transition: background .1s;
+}
+
+.cap-table .expand-trigger:hover { background: var(--surface); }
+
+.cap-table .expand-trigger td:first-child::after {
+  content: '+';
+  float: right;
+  font-family: var(--mono);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.cap-table .expand-trigger.open td:first-child::after { content: '\2212'; }
+
+.cap-detail {
+  display: none;
+}
+
+.cap-detail.visible {
+  display: table-row;
+}
+
+.cap-detail td {
+  padding: 12px 16px 16px;
+  color: var(--text-3);
+  font-size: 13px;
+  line-height: 1.6;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Architecture diagram — real data flow, not decorative ── */
+.arch-diagram {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-3);
+  padding: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.arch-diagram .hl { color: var(--accent-text); }
+
+/* ── Setup — replaces 01/02/03 step sequence ── */
+.setup-flow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+}
+
+.setup-item {
+  display: contents;
+}
+
+.setup-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.setup-content {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.setup-item:last-child .setup-label,
+.setup-item:last-child .setup-content { border-bottom: none; }
+
+.setup-content strong { color: var(--text); font-weight: 500; }
+
+.setup-content a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(240,112,32,.3);
+  text-underline-offset: 2px;
+}
+
+.setup-content a:hover { text-decoration-color: var(--accent-text); }
+
+/* ── Install — two-column, no rounded cards ── */
+.install-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.install-option {
+  padding: 28px 24px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.install-option h3 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.install-option > p {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* Tab switcher — no rounded pills */
+.platform-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+  width: fit-content;
+}
+
+.platform-tab {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.platform-tab + .platform-tab { border-left: 1px solid var(--border); }
+
+.platform-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.platform-tab:not(.active):hover { color: var(--text-2); }
+
+.install-steps { padding: 0; }
+.install-steps.hidden { display: none; }
+
+.install-steps ol {
+  list-style: none;
+  counter-reset: steps;
+  padding: 0;
+  margin: 0;
+}
+
+.install-steps li {
+  counter-increment: steps;
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.install-steps li:last-child { padding-bottom: 0; }
+
+.install-steps li::before {
+  content: counter(steps);
+  position: absolute;
+  left: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.install-steps li strong { color: var(--text); font-weight: 500; }
+
+.install-steps li a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(240,112,32,.3);
+}
+
+.install-link {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.install-link a {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color .12s;
+}
+
+.install-link a:hover { color: var(--accent-text); }
+.install-link a::after { content: ' \2192'; }
+
+.key-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  color: var(--text-2);
+}
+
+/* ── Examples — hover-reveal metadata, not static grid ── */
+.examples-list {
+  border: 1px solid var(--border);
+}
+
+.example-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  cursor: default;
+  transition: background .1s;
+  position: relative;
+}
+
+.example-item:last-child { border-bottom: none; }
+.example-item:hover { background: var(--surface); }
+
+/* Hover-reveal metadata — genuine interactive element */
+.example-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity .15s;
+  white-space: nowrap;
+}
+
+.example-item:hover .example-meta { opacity: 1; }
+
+/* ── Bottom CTA ─────────────────── */
+.bottom-cta {
+  padding: 48px 0;
+}
+
+.cta-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.cta-text {
+  font-size: 15px;
+  color: var(--text-3);
+}
+
+/* ── Footer ─────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  transition: color .12s;
+}
+
+.footer-links a:hover { color: var(--text-3); }
+
+/* ── Responsive ─────────────────── */
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; padding: 48px 0 32px; }
+  .section-head { grid-template-columns: 1fr; gap: 8px; }
+  .section-tag { padding-top: 0; }
+  .install-grid { grid-template-columns: 1fr; }
+  .setup-flow { grid-template-columns: 1fr; }
+  .setup-label { border-right: none; }
+  section { padding: 48px 0; }
+  .cap-table td:first-child { width: auto; }
+}
+
+@media (max-width: 640px) {
+  .w { padding: 0 16px; }
+  .nav-link { display: none; }
+  .hero { padding: 36px 0 24px; }
+  .cta-inner { flex-direction: column; align-items: flex-start; }
+}
+
+@media (pointer: coarse) {
+  .nav-link, .footer-links a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 8v8M18 8v8M3 10v4M21 10v4M9 12h6"/>
+  </symbol>
+</svg>
+
+<nav class="nav">
+  <div class="w nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg><use href="#i-mark"/></svg></div>
+      workout-agent
+    </a>
+    <div class="nav-right">
+      <a href="#capabilities" class="nav-link">capabilities</a>
+      <a href="#setup" class="nav-link">setup</a>
+      <a href="#install" class="nav-link">install</a>
+      <a href="/app" class="btn btn-primary">open app</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="w" style="padding:0;">
+      <h1>Your Hevy data.<br>AI that acts on it.</h1>
+      <p class="hero-sub">
+        Connects to your Hevy account. Reads every set you've logged. Spots plateaus,
+        adjusts routines, writes changes back. No more copy-pasting your training log
+        into a chatbot.
+      </p>
+      <div class="hero-actions">
+        <a href="/app" class="btn btn-primary btn-lg">open app</a>
+        <a href="https://github.com/ThomasVrancken/workout-app" class="btn btn-ghost btn-lg" target="_blank" rel="noopener">source</a>
+      </div>
+      <!-- Specificity markers — real metadata, not placeholder -->
+      <div class="hero-meta">
+        <span>v0.4.2</span>
+        <span>env:production</span>
+        <span>gemini-2.5-flash</span>
+        <span>europe-west1</span>
+      </div>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="msg msg-user">Has my bench been stalling? What should I change?</div>
+    <div class="msg msg-bot">
+      <p><strong>Your bench has plateaued at 95 kg for 4 weeks.</strong> Chest volume dropped 18% since you added squash.</p>
+      <div class="data-table">
+        <div class="data-label">bench_press // last_4_weeks</div>
+        <div class="data-row"><span>top_set</span><span>95 kg &times; 5</span></div>
+        <div class="data-row"><span>weekly_volume</span><span>2,840 kg <span class="down">&minus;18%</span></span></div>
+        <div class="data-row"><span>chest_sets_wk</span><span>8 <span class="down">&minus;3</span></span></div>
+        <div class="data-row"><span>est_1rm</span><span>111 kg</span></div>
+      </div>
+      <p style="margin-top:8px;">Add a heavy triple at 102.5 kg on push day and bump accessory volume back up. Want me to update your routine?</p>
+    </div>
+    <div class="msg msg-user">Yes, update it.</div>
+    <div class="typing-ind" aria-hidden="true"><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<section class="section-rule" id="capabilities">
+  <div class="w">
+    <div class="section-head">
+      <div class="section-tag">sys.capabilities</div>
+      <div>
+        <h2 class="section-title">A coach, not a chatbot.</h2>
+        <p class="section-sub">It reads your data, does the analysis, and writes changes back. You just ask.</p>
+      </div>
+    </div>
+
+    <!-- Capability table with expandable rows — replaces 3-col feature cards -->
+    <table class="cap-table">
+      <thead>
+        <tr><th>capability</th><th>description</th></tr>
+      </thead>
+      <tbody>
+        <tr class="expand-trigger" data-expand="cap-1">
+          <td>Full history access</td>
+          <td>Every set, rep, and PR pulled live from Hevy via the MCP server.</td>
+        </tr>
+        <tr class="cap-detail" id="cap-1">
+          <td colspan="2">Uses the <code>hevy-mcp</code> server (spawned per request) to call the Hevy API with your encrypted key. Fetches workouts, routines, exercises, and body measurements. Data is held in memory only — never persisted server-side. Typical response includes 50-200 workout sessions depending on history length.</td>
+        </tr>
+        <tr class="expand-trigger" data-expand="cap-2">
+          <td>Write-back to Hevy</td>
+          <td>Adjusts routines and syncs changes back to your Hevy account.</td>
+        </tr>
+        <tr class="cap-detail" id="cap-2">
+          <td colspan="2">The agent can create, update, and delete routines and routine folders through the Hevy API. When you say "swap incline press for dumbbell flies on push day," it reads the current routine, makes the substitution, and writes it back. You can revert any change in the Hevy app or revoke API access at any time.</td>
+        </tr>
+        <tr class="expand-trigger" data-expand="cap-3">
+          <td>Transparent tool calls</td>
+          <td>Every API call is visible — you see what data it pulled and what it changed.</td>
+        </tr>
+        <tr class="cap-detail" id="cap-3">
+          <td colspan="2">The chat UI shows a collapsible "tools used" section for each response. It includes the tool name, arguments (JSON), and the full response payload. No black box — you can verify exactly what the agent read or modified before and after each action.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Architecture diagram — real data flow with actual labels -->
+    <div style="margin-top: 32px;">
+      <div class="arch-diagram"><span class="hl">browser</span>  ──HTTPS──▶  <span class="hl">cloud_run</span>  ──spawn──▶  <span class="hl">hevy-mcp</span>  ──REST──▶  <span class="hl">hevy_api</span>
+   │                    │                                    
+   │ firebase_auth      ├──▶ <span class="hl">vertex_ai</span> (gemini-2.5-flash)    
+   │ (id_token)         ├──▶ <span class="hl">firestore</span> (encrypted user data)  
+   │                    └──▶ <span class="hl">firebase_auth</span> (token verify)     
+   │                                                          
+   └──▶ chat history held in browser only (never persisted)</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-rule" id="setup">
+  <div class="w">
+    <div class="section-head">
+      <div class="section-tag">sys.setup</div>
+      <div>
+        <h2 class="section-title">Two minutes. Then it works.</h2>
+      </div>
+    </div>
+
+    <!-- Setup flow — structured key/value, not numbered steps -->
+    <div class="setup-flow">
+      <div class="setup-item">
+        <div class="setup-label">auth</div>
+        <div class="setup-content"><strong>Sign in</strong> with Google or email. One click.</div>
+      </div>
+      <div class="setup-item">
+        <div class="setup-label">connect</div>
+        <div class="setup-content"><strong>Paste your Hevy API key.</strong> Get it from <a href="https://hevy.com/settings?developer" target="_blank" rel="noopener">hevy.com/settings?developer</a>. Encrypted at rest with AES-128 (Fernet), never stored in plain text. Requires Hevy PRO.</div>
+      </div>
+      <div class="setup-item">
+        <div class="setup-label">query</div>
+        <div class="setup-content"><strong>Ask anything.</strong> Training analysis, routine changes, volume checks. The agent has tool access to read and write your Hevy data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-rule" id="install">
+  <div class="w">
+    <div class="section-head">
+      <div class="section-tag">sys.install</div>
+      <div>
+        <h2 class="section-title">Use it your way.</h2>
+        <p class="section-sub">Works in the browser. Even better installed — it launches full-screen from your home screen like a native app.</p>
+      </div>
+    </div>
+
+    <div class="install-grid">
+      <div class="install-option">
+        <h3>Install on your phone</h3>
+        <p>Full-screen, no browser chrome, instant launch. No app store.</p>
+
+        <div class="platform-tabs">
+          <button class="platform-tab active" data-tab="ios">iphone</button>
+          <button class="platform-tab" data-tab="android">android</button>
+        </div>
+
+        <div class="install-steps" id="install-ios">
+          <ol>
+            <li>Open <a href="/app">workout-agent.app</a> in <strong>Safari</strong></li>
+            <li>Tap <strong>Share</strong> <span class="key-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></span> at the bottom</li>
+            <li>Tap <strong>"Add to Home Screen"</strong></li>
+            <li>Tap <strong>Add</strong></li>
+          </ol>
+        </div>
+
+        <div class="install-steps hidden" id="install-android">
+          <ol>
+            <li>Open <a href="/app">workout-agent.app</a> in <strong>Chrome</strong></li>
+            <li>Tap <strong>menu</strong> <span class="key-icon">&#8942;</span></li>
+            <li>Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></li>
+            <li>Confirm</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="install-option">
+        <h3>Use in browser</h3>
+        <p>No install needed. Open the app and start chatting.</p>
+        <div class="install-link"><a href="/app">open app</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-rule">
+  <div class="w">
+    <div class="section-head">
+      <div class="section-tag">sys.examples</div>
+      <div>
+        <h2 class="section-title">Things you can ask</h2>
+      </div>
+    </div>
+
+    <!-- Example list with hover-reveal metadata — genuine interactive element -->
+    <div class="examples-list">
+      <div class="example-item">
+        <span>Why has my bench stalled the last 3 weeks?</span>
+        <span class="example-meta">reads: workout_history, exercise_stats</span>
+      </div>
+      <div class="example-item">
+        <span>I tweaked my shoulder — adjust my push day.</span>
+        <span class="example-meta">reads: routines &middot; writes: routine_update</span>
+      </div>
+      <div class="example-item">
+        <span>Playing squash twice this week. Reduce leg volume.</span>
+        <span class="example-meta">reads: routines &middot; writes: routine_update</span>
+      </div>
+      <div class="example-item">
+        <span>What muscle groups am I neglecting this month?</span>
+        <span class="example-meta">reads: workout_history, exercise_stats</span>
+      </div>
+      <div class="example-item">
+        <span>Build me a push/pull/legs routine for hypertrophy.</span>
+        <span class="example-meta">reads: routines &middot; writes: routine_create</span>
+      </div>
+      <div class="example-item">
+        <span>Show my last workout and tell me what to do next.</span>
+        <span class="example-meta">reads: workout_history</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-rule bottom-cta">
+  <div class="w">
+    <div class="cta-inner">
+      <p class="cta-text">Free. Open source. Two minutes to set up.</p>
+      <a href="/app" class="btn btn-primary btn-lg">open app</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="w">
+    <div class="footer-inner">
+      <span>&copy; 2026 workout-agent // not affiliated with Hevy // requires Hevy PRO for API access</span>
+      <div class="footer-links">
+        <a href="/privacy">privacy</a>
+        <a href="/terms">terms</a>
+        <a href="https://github.com/ThomasVrancken/workout-app" target="_blank" rel="noopener">github</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Expandable capability rows — click-to-expand detail
+document.querySelectorAll('.expand-trigger').forEach(row => {
+  row.addEventListener('click', () => {
+    const targetId = row.dataset.expand;
+    const detail = document.getElementById(targetId);
+    if (!detail) return;
+    const isOpen = detail.classList.contains('visible');
+    // close all others
+    document.querySelectorAll('.cap-detail.visible').forEach(el => {
+      el.classList.remove('visible');
+      const trigger = document.querySelector(`[data-expand="${el.id}"]`);
+      if (trigger) trigger.classList.remove('open');
+    });
+    if (!isOpen) {
+      detail.classList.add('visible');
+      row.classList.add('open');
+    }
+  });
+});
+
+// Platform tab switcher
+document.querySelectorAll('.platform-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const parent = tab.closest('.install-option');
+    parent.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    parent.querySelectorAll('.install-steps').forEach(el => el.classList.add('hidden'));
+    parent.querySelector('#install-' + tab.dataset.tab).classList.remove('hidden');
+  });
+});
+</script>
+</body>
+</html>

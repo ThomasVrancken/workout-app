@@ -23,18 +23,12 @@ resource "google_cloud_run_v2_service" "workout_agent" {
     service_account = google_service_account.workout_agent.email
 
     containers {
-      # Placeholder for initial creation. The actual image is managed
-      # by deploy.sh and ignored by Terraform after first apply.
-      image = "gcr.io/cloudrun/hello"
+      image = "gcr.io/cloudrun/hello" # placeholder; real image is pushed by deploy.sh
 
       ports {
         container_port = 8080
       }
 
-      env {
-        name  = "HEVY_API_KEY"
-        value = var.hevy_api_key
-      }
       env {
         name  = "GOOGLE_CLOUD_PROJECT"
         value = var.project_id
@@ -48,8 +42,20 @@ resource "google_cloud_run_v2_service" "workout_agent" {
         value = var.gemini_model
       }
       env {
-        name  = "APP_SECRET"
-        value = var.app_secret
+        name  = "FIREBASE_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "FIREBASE_API_KEY"
+        value = var.firebase_api_key
+      }
+      env {
+        name  = "FIREBASE_AUTH_DOMAIN"
+        value = var.firebase_auth_domain
+      }
+      env {
+        name  = "ENCRYPTION_KEY"
+        value = var.encryption_key
       }
     }
   }
@@ -62,10 +68,13 @@ resource "google_cloud_run_v2_service" "workout_agent" {
     ]
   }
 
-  depends_on = [google_project_service.apis]
+  depends_on = [
+    google_project_service.apis,
+    google_firestore_database.default,
+  ]
 }
 
-# Allow unauthenticated access (app handles auth internally)
+# Public access — the app gates everything behind Firebase Auth at the app layer.
 resource "google_cloud_run_v2_service_iam_member" "public" {
   name     = google_cloud_run_v2_service.workout_agent.name
   location = var.region

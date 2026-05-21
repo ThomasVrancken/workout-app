@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // The Workout Agent uses the Firebase Admin SDK exclusively (server-side).
+    // Reject ALL client-side access. The backend bypasses these rules because
+    // it authenticates as the Cloud Run service account.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

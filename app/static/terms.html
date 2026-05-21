@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A0A0A">
+<title>Terms of Service — Workout Agent</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --border: #282828;
+  --border-hover: #3A3A3A;
+  --text: #E8E8E8;
+  --text-2: #CCCCCC;
+  --text-3: #888888;
+  --text-muted: #555555;
+  --accent: #E8590C;
+  --accent-text: #F07020;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+::selection { background: rgba(232,89,12,.25); color: var(--text); }
+
+.container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+.topbar {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-mark svg { width: 12px; height: 12px; color: #fff; }
+
+.topbar a.back {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-3);
+  text-decoration: none;
+  font-weight: 400;
+  transition: color .12s;
+}
+.topbar a.back:hover { color: var(--text); }
+
+main { padding: 56px 0 80px; }
+
+.page-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-bottom: 40px;
+  font-family: var(--mono);
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 40px 0 12px;
+  color: var(--text);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+p, li {
+  color: var(--text-2);
+  font-size: 15px;
+  margin-bottom: 12px;
+  line-height: 1.65;
+}
+
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 6px; }
+
+strong { color: var(--text); font-weight: 500; }
+em { color: var(--text-3); font-style: italic; }
+
+code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--accent-text);
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(240,112,32,.3);
+  text-underline-offset: 2px;
+  transition: text-decoration-color .12s;
+}
+
+a:hover { text-decoration-color: var(--accent-text); }
+
+.callout {
+  border-left: 2px solid var(--accent);
+  padding: 14px 18px;
+  margin: 28px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  background: var(--surface);
+}
+
+.callout strong { color: var(--accent-text); font-weight: 500; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+footer a {
+  color: var(--text-3);
+  text-decoration: none;
+  padding: 4px 6px;
+}
+
+footer a:hover { color: var(--text); }
+
+@media (max-width: 640px) {
+  .container, .topbar-inner { padding: 0 16px; }
+  main { padding: 40px 0 56px; }
+  h2 { font-size: 16px; }
+  p, li { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 8v8M18 8v8M3 10v4M21 10v4M9 12h6"/>
+  </symbol>
+</svg>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="brand">
+      <div class="brand-mark"><svg><use href="#i-mark"/></svg></div>
+      <span>workout-agent</span>
+    </a>
+    <a class="back" href="/">&larr; back</a>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="page-tag">legal/terms</div>
+    <h1>Terms of Service</h1>
+    <p class="subtitle">last_updated: 2026-05-18T00:00:00Z</p>
+
+    <div class="callout">
+      <strong>Plain English:</strong> Workout Agent is a free, open-source service provided as-is.
+      Use it at your own risk, follow the rules below, and we reserve the right to update or shut down
+      the service at any time.
+    </div>
+
+    <h2>The service</h2>
+    <p>
+      Workout Agent ("the service") is a free, open-source AI strength coach that connects to your
+      <a href="https://www.hevyapp.com/" target="_blank" rel="noopener">Hevy</a> account via your personal
+      Hevy API key. The service is operated as an open-source project, available for self-hosting under
+      its open-source license.
+    </p>
+
+    <h2>Eligibility</h2>
+    <ul>
+      <li>You must be at least 16 years old to use the service.</li>
+      <li>You must have a valid Hevy account, with the PRO subscription required for Hevy API access.</li>
+      <li>You must have a Google account or a valid email address to sign in.</li>
+    </ul>
+
+    <h2>Your responsibilities</h2>
+    <ul>
+      <li>You are responsible for your own Hevy API key. Do not share your key with others or paste it
+        anywhere that is not the official Workout Agent app.</li>
+      <li>You are responsible for the content of the messages you send to the AI.</li>
+      <li>You agree not to abuse the service (no automated scraping, no attempts to exploit it, no
+        spamming or excessive request volumes).</li>
+      <li>You agree to the
+        <a href="https://www.hevyapp.com/terms" target="_blank" rel="noopener">Hevy Terms of Service</a>
+        when using your Hevy API key through this app.</li>
+    </ul>
+
+    <h2>AI responses are not professional advice</h2>
+    <p>
+      The AI gives suggestions for workout programming and adjustments. These are <strong>not</strong>
+      medical, physiotherapy, or professional coaching advice. If you have an injury, an underlying
+      health condition, or are unsure whether an exercise is safe for you, consult a qualified
+      professional. You are responsible for what you do in the gym.
+    </p>
+
+    <h2>Modifications to your Hevy data</h2>
+    <p>
+      With your Hevy API key, the AI can read <em>and modify</em> your routines and workouts in Hevy.
+      You are responsible for reviewing what the AI does. You can always revert changes in the Hevy app
+      itself, and you can revoke this access at any time by deleting your API key in your Hevy settings.
+    </p>
+
+    <h2>No guarantees, no SLA</h2>
+    <p>
+      The service is provided <strong>"as-is" and "as available"</strong>, without warranty of any
+      kind. There is no uptime guarantee, no service level agreement, and no commitment to fix bugs or
+      add features. The service may be changed, suspended, or shut down at any time without notice.
+    </p>
+
+    <h2>Limitation of liability</h2>
+    <p>
+      To the maximum extent permitted by law, neither the maintainers nor any contributors are liable
+      for any direct, indirect, incidental, or consequential damages arising from your use of the service
+      &mdash; including but not limited to lost data, lost workouts, injuries, or any consequences of
+      acting on AI suggestions.
+    </p>
+
+    <h2>Termination</h2>
+    <p>
+      You can stop using the service at any time by deleting your account in the app's settings.
+      We may suspend or terminate your account if you abuse the service.
+    </p>
+
+    <h2>Open source license</h2>
+    <p>
+      The source code is available on
+      <a href="https://github.com/ThomasVrancken/workout-app" target="_blank" rel="noopener">GitHub</a>.
+      You are welcome to fork it and host your own instance. The open-source license terms there
+      apply to the code, not to this hosted service.
+    </p>
+
+    <h2>Changes to these terms</h2>
+    <p>
+      If we change these terms in a meaningful way, you will be asked to re-accept them the next time
+      you sign in. The last-updated date at the top of this page always reflects the current version.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <a href="/">home</a>
+  &middot;
+  <a href="/privacy">privacy</a>
+  &middot;
+  <a href="https://github.com/ThomasVrancken/workout-app" target="_blank" rel="noopener">github</a>
+</footer>
+
+</body>
+</html>

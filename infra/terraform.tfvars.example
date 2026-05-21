@@ -1,8 +1,16 @@
 # Copy this file to terraform.tfvars and fill in your values.
 #   cp terraform.tfvars.example terraform.tfvars
+#
+# Generate the encryption_key with:
+#   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+#
+# The firebase_* values are found in the Firebase Console:
+#   Project Settings → General → Your apps → Web app config
 
-project_id   = "my-gcp-project-id"
-region       = "europe-west1"
-hevy_api_key = "your-hevy-api-key"
-app_secret   = "pick-a-passphrase"
-gemini_model = "gemini-3-flash"
+project_id           = "my-gcp-project-id"
+region               = "europe-west1"
+firestore_location   = "eur3"
+encryption_key       = "PASTE-GENERATED-FERNET-KEY-HERE"
+firebase_api_key     = "AIza..."
+firebase_auth_domain = "my-gcp-project-id.firebaseapp.com"
+gemini_model         = "gemini-2.5-pro"

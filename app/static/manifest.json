@@ -1,10 +1,12 @@
 {
   "name": "Workout Agent",
   "short_name": "Workout",
-  "start_url": "/",
+  "start_url": "/app",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "description": "AI workout coach connected to your Hevy data.",
   "icons": [
     {
       "src": "/static/icon-192.png",
