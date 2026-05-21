@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0A0A0A">
+<meta name="theme-color" content="#111827">
 <title>Workout Agent — AI coach that reads your Hevy data</title>
 <meta name="description" content="Connect Hevy. Get an AI coach that knows every set you've ever logged. Analyzes trends, spots stalls, adjusts routines.">
 <meta property="og:title" content="Workout Agent — AI coach that reads your Hevy data">
@@ -17,19 +17,19 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  --bg: #0A0A0A;
-  --surface: #141414;
-  --surface-2: #1E1E1E;
-  --border: #282828;
-  --border-hover: #3A3A3A;
-  --text: #E8E8E8;
-  --text-2: #CCCCCC;
-  --text-3: #888888;
-  --text-muted: #555555;
+  --bg: #111827;
+  --surface: #1C2536;
+  --surface-2: #243044;
+  --border: #2E3B50;
+  --border-hover: #435268;
+  --text: #F1F5F9;
+  --text-2: #CBD5E1;
+  --text-3: #94A3B8;
+  --text-muted: #64748B;
   --accent: #E8590C;
   --accent-text: #F07020;
-  --danger: #DC2626;
-  --success: #16A34A;
+  --danger: #EF4444;
+  --success: #22C55E;
   --font: 'IBM Plex Sans', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
 }
@@ -59,7 +59,9 @@ a { color: inherit; text-decoration: none; }
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--bg);
+  background: rgba(17, 24, 39, .85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -142,9 +144,11 @@ a { color: inherit; text-decoration: none; }
 .btn-lg { padding: 10px 22px; font-size: 14px; }
 
 /* ── Hero ───────────────────────── */
-/* Left-aligned, no centered badge — technical/instrument direction */
 .hero {
   padding: 80px 0 48px;
+}
+
+.hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
@@ -193,7 +197,7 @@ a { color: inherit; text-decoration: none; }
 /* ── Demo ───────────────────────── */
 .demo {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px;
   background: var(--surface);
   display: flex;
@@ -259,7 +263,7 @@ a { color: inherit; text-decoration: none; }
 .data-table {
   margin-top: 8px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -281,7 +285,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-3);
 }
 
-.data-row + .data-row { border-top: 1px solid rgba(255,255,255,.04); }
+.data-row + .data-row { border-top: 1px solid rgba(255,255,255,.06); }
 .data-row span:last-child { color: var(--text); font-weight: 500; }
 .down { color: var(--danger); font-size: 11px; font-weight: 500; }
 
@@ -329,7 +333,7 @@ a { color: inherit; text-decoration: none; }
 /* ── Section dividers ───────────── */
 section { padding: 64px 0; }
 
-.section-rule { border-top: 1px solid var(--border); }
+.section-rule { border-top: 1px solid rgba(46, 59, 80, .45); }
 
 .section-head {
   display: grid;
@@ -369,7 +373,7 @@ section { padding: 64px 0; }
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -437,7 +441,7 @@ section { padding: 64px 0; }
   color: var(--text-3);
   padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--surface);
   overflow-x: auto;
   white-space: pre;
@@ -451,7 +455,7 @@ section { padding: 64px 0; }
   grid-template-columns: 200px 1fr;
   gap: 0;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -497,13 +501,13 @@ section { padding: 64px 0; }
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .install-option {
   padding: 28px 24px;
-  background: var(--bg);
+  background: var(--surface);
   display: flex;
   flex-direction: column;
 }
@@ -527,7 +531,7 @@ section { padding: 64px 0; }
   display: flex;
   gap: 0;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 14px;
   width: fit-content;
@@ -619,7 +623,7 @@ section { padding: 64px 0; }
 /* ── Examples — hover-reveal metadata, not static grid ── */
 .examples-list {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -688,7 +692,7 @@ section { padding: 64px 0; }
 
 /* ── Footer ─────────────────────── */
 .footer {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(46, 59, 80, .45);
   padding: 24px 0;
 }
 
@@ -717,7 +721,8 @@ section { padding: 64px 0; }
 
 /* ── Responsive ─────────────────── */
 @media (max-width: 768px) {
-  .hero { grid-template-columns: 1fr; padding: 48px 0 32px; }
+  .hero { padding: 48px 0 32px; }
+  .hero-grid { grid-template-columns: 1fr; }
   .section-head { grid-template-columns: 1fr; gap: 8px; }
   .section-tag { padding-top: 0; }
   .install-grid { grid-template-columns: 1fr; }
@@ -772,8 +777,8 @@ section { padding: 64px 0; }
 <main>
 
 <section class="hero">
-  <div class="hero-content">
-    <div class="w" style="padding:0;">
+  <div class="w hero-grid">
+    <div class="hero-content">
       <h1>Your Hevy data.<br>AI that acts on it.</h1>
       <p class="hero-sub">
         Connects to your Hevy account. Reads every set you've logged. Spots plateaus,
@@ -784,7 +789,6 @@ section { padding: 64px 0; }
         <a href="/app" class="btn btn-primary btn-lg">open app</a>
         <a href="https://github.com/ThomasVrancken/workout-app" class="btn btn-ghost btn-lg" target="_blank" rel="noopener">source</a>
       </div>
-      <!-- Specificity markers — real metadata, not placeholder -->
       <div class="hero-meta">
         <span>v0.4.2</span>
         <span>env:production</span>
@@ -792,8 +796,7 @@ section { padding: 64px 0; }
         <span>europe-west1</span>
       </div>
     </div>
-  </div>
-  <div class="demo">
+    <div class="demo">
     <div class="msg msg-user">Has my bench been stalling? What should I change?</div>
     <div class="msg msg-bot">
       <p><strong>Your bench has plateaued at 95 kg for 4 weeks.</strong> Chest volume dropped 18% since you added squash.</p>
@@ -808,6 +811,7 @@ section { padding: 64px 0; }
     </div>
     <div class="msg msg-user">Yes, update it.</div>
     <div class="typing-ind" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
   </div>
 </section>
 
